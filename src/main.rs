@@ -1,7 +1,25 @@
 use std::env;
 
 use dotenv::dotenv;
-use lettre::{Message, SmtpTransport, transport::smtp::authentication::Credentials, Transport};
+use lazy_static::lazy_static;
+use lettre::{
+    message::header, transport::smtp::authentication::Credentials, Message, SmtpTransport,
+    Transport,
+};
+use tera::{Context, Tera};
+
+lazy_static! {
+    pub static ref TEMPLATES: Tera = {
+        let tera = match Tera::new("templates/**/*") {
+            Ok(t) => t,
+            Err(e) => {
+                println!("Parsing error(s): {}", e);
+                ::std::process::exit(1);
+            }
+        };
+        tera
+    };
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -9,14 +27,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let email_username = env::var("EMAIL_USERNAME")?;
     let email_pass = env::var("EMAIL_PASS")?;
+    let email_from = env::var("EMAIL_FROM")?;
 
-    println!("{} {}", email_pass, email_username);
+    let html = TEMPLATES.render("subject.html", &Context::new()).unwrap();
 
     let email = Message::builder()
-        .from("toyko2001@gmail.com".parse().unwrap())
+        .from(email_from.parse().unwrap())
         .to("toyko2001@gmail.com".parse().unwrap())
         .subject("Some subject")
-        .body(String::from("Some body"))?;
+        .header(header::ContentType::TEXT_HTML)
+        .body(html)?;
 
     let smtp_transport = SmtpTransport::relay("smtp.gmail.com")?
         .credentials(Credentials::new(email_username, email_pass))
@@ -26,4 +46,3 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
-
