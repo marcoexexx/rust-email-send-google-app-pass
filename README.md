@@ -26,7 +26,7 @@ Speedy Inbox is a Rust-based email sender designed to simplify the process of se
    ```
 4. Run the application:
    ```
-   cargo run --release
+   cargo run --release -- --config <config-path>
    ```
 
 ### Contribution:
