@@ -22,10 +22,12 @@ Speedy Inbox is a Rust-based email sender designed to simplify the process of se
    ```
 2. Set up config file:
    ```toml
-    to="toyko2001@gmail.com"
-    subject="Some subject"
-    html="/path/template.html" # or
-    # body="Some message body"
+   # /path/config.toml
+   
+   to="toyko2001@gmail.com"
+   subject="Some subject"
+   html="/path/template.html" # or
+   # body="Some message body"
    ```
 
 3. Build the project:
@@ -34,7 +36,7 @@ Speedy Inbox is a Rust-based email sender designed to simplify the process of se
    ```
 4. Run the application:
    ```
-   cargo run --release -- --config <config-path>
+   cargo run --release -- --config /path/config.toml
    ```
 
 ### Contribution:
